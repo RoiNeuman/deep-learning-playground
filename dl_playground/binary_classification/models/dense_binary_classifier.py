@@ -8,7 +8,7 @@ from tensorflow.python.keras.regularizers import l2
 def dense_binary_classifier(input_dim: int,
                             hidden_layers_units: List[int],
                             batch_norm: bool = False,
-                            dropout: float = 1.0,
+                            dropout: float = 0.,
                             l2_regularizer_param: int = 0.01):
     model = Sequential()
 
@@ -19,7 +19,7 @@ def dense_binary_classifier(input_dim: int,
                         kernel_regularizer=l2(l2_regularizer_param),
                         bias_regularizer=l2(l2_regularizer_param),
                         activation='relu'))
-        if dropout < 1:
+        if dropout != 0.:
             model.add(Dropout(dropout))
         if batch_norm:
             model.add(BatchNormalization(axis=1))

@@ -1,5 +1,8 @@
+import multiprocessing
+
 from binary_classification.data_preprocess import load_heart_dataset
 from binary_classification.models.dense_binary_classifier import dense_binary_classifier
+from binary_classification.models.residual_dense_binary_classifier import residual_dense_binary_classifier
 
 
 def run():
@@ -8,14 +11,23 @@ def run():
                                                                         test_ratio=0.2)
 
     # Create the model
-    model = dense_binary_classifier(input_dim=X_train.shape[1],
-                                    hidden_layers_units=[16, 8, 8],
-                                    dropout=0.1,
-                                    batch_norm=True)
+    # model = dense_binary_classifier(input_dim=X_train.shape[1],
+    #                                 hidden_layers_units=[X_train.shape[1] / 2] * 20,
+    #                                 dropout=0.3,
+    #                                 batch_norm=True)
+    model = residual_dense_binary_classifier(input_dim=X_train.shape[1],
+                                             hidden_layers_units=[X_train.shape[1] / 2] * 20,
+                                             dropout=0.3,
+                                             batch_norm=True)
     model.summary()
 
     # Train the model
-    model.fit(X_train, Y_train, validation_data=(X_val, Y_val), epochs=350, batch_size=16)
+    model.fit(X_train, Y_train,
+              validation_data=(X_val, Y_val),
+              epochs=350,
+              batch_size=64,
+              use_multiprocessing=True,
+              workers=multiprocessing.cpu_count())
 
     # Evaluate the model on the test set
     test_predictions = model.evaluate(X_test, Y_test)

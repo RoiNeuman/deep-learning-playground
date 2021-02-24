@@ -12,16 +12,17 @@ def dense_binary_classifier(input_dim: int,
                             l2_regularizer_param: int = 0.01):
     model = Sequential()
 
-    model.add(Dense(hidden_layers_units[0],
-                    input_dim=input_dim,
-                    kernel_initializer='normal',
-                    kernel_regularizer=l2(l2_regularizer_param),
-                    bias_regularizer=l2(l2_regularizer_param),
-                    activation='relu'))
-    if dropout < 1:
-        model.add(Dropout(dropout))
-    if batch_norm:
-        model.add(BatchNormalization(axis=1))
+    if len(hidden_layers_units):
+        model.add(Dense(hidden_layers_units[0],
+                        input_dim=input_dim,
+                        kernel_initializer='normal',
+                        kernel_regularizer=l2(l2_regularizer_param),
+                        bias_regularizer=l2(l2_regularizer_param),
+                        activation='relu'))
+        if dropout < 1:
+            model.add(Dropout(dropout))
+        if batch_norm:
+            model.add(BatchNormalization(axis=1))
 
     for layer_units in hidden_layers_units[1:]:
         model.add(Dense(layer_units,

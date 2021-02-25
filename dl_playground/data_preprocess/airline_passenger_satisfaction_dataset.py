@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
+from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 
 def load_airline_passenger_satisfaction_dataset(train_ratio: float = 0.75,
                                                 validation_ratio: float = 0.15,
-                                                test_ratio: float = 0.10):
+                                                test_ratio: float = 0.10,
+                                                max_feature_dims: int or None = None):
     df = pd.read_csv('./datasets/airline_passenger_satisfaction.csv')
 
     # Drop unnecessary columns
@@ -31,19 +33,31 @@ def load_airline_passenger_satisfaction_dataset(train_ratio: float = 0.75,
     for key in df.select_dtypes(include=['object']).columns:
         df[key] = df[key].fillna(df[key].mode()[0])
 
-    # Label encoding of categorical variables
-    label_encoders = {}
+    # Encoding of categorical variables
     for col in df.select_dtypes(include=['object']).columns:
-        label_encoders[col] = LabelEncoder()
-        df[col] = label_encoders[col].fit_transform(df[col])
+
+        # Creating One-Hot encoding for the different categories
+        dummies = pd.get_dummies(df[col])
+
+        # Applying PCA on the One-Hot vectors for:
+        # 1. Dimensionality reduction
+        # 2. Capture linear correlations between the different categories (Their amount in the dataset)
+        pca_components = dummies.shape[1]
+        if max_feature_dims is not None:
+            pca_components = min(max_feature_dims, dummies.shape[1])
+        pca = PCA(n_components=pca_components)
+        dummies = pd.DataFrame(pca.fit_transform(dummies),
+                               columns=[f'{col}_pca_{i + 1}' for i in range(pca_components)])
+
+        # Adding the new encoded columns the removing the original column
+        df = pd.concat([df, dummies], axis=1)
+        df = df.drop(col, axis=1)
 
     # Separating features and labels
-    features = ['Type_of_Travel', 'Inflight_wifi_service', 'Online_boarding', 'Seat_comfort', 'Flight_Distance',
-                'Inflight_entertainment', 'On-board_service', 'Leg_room_service', 'Cleanliness', 'Checkin_service',
-                'Inflight_service', 'Baggage_handling']
     target = ['satisfaction']
-    X = df[features]
     y = df[target].to_numpy()
+    df = df.drop(target, axis=1)
+    X = df
 
     # Normalize Features
     scaler = StandardScaler()

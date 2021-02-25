@@ -9,8 +9,8 @@ from data_preprocess.airline_passenger_satisfaction_dataset import load_airline_
 
 
 def run():
-    X_train, Y_train, X_val, Y_val, X_test, Y_test = load_airline_passenger_satisfaction_dataset(train_ratio=0.75,
-                                                                                                 validation_ratio=0.15,
+    X_train, Y_train, X_val, Y_val, X_test, Y_test = load_airline_passenger_satisfaction_dataset(train_ratio=0.8,
+                                                                                                 validation_ratio=0.1,
                                                                                                  test_ratio=0.1)
 
     # Create the model
@@ -19,7 +19,7 @@ def run():
     #                                 dropout=0.3,
     #                                 batch_norm=True)
     model = residual_dense_binary_classifier(input_dim=X_train.shape[1],
-                                             hidden_layers_units=[X_train.shape[1]] * 20,
+                                             hidden_layers_units=[X_train.shape[1]] * 10,
                                              dropout=0.2,
                                              batch_norm=True)
     model.summary()

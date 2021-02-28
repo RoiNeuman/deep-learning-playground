@@ -6,19 +6,15 @@ from utils.statistics import plot_confusion_matrix
 
 
 def run():
-    X_train, Y_train, X_val, Y_val, X_test, Y_test = load_airline_passenger_satisfaction_dataset(train_ratio=0.8,
+    X_train, Y_train, X_val, Y_val, X_test, Y_test = load_airline_passenger_satisfaction_dataset(train_ratio=0.7,
                                                                                                  validation_ratio=0.1,
-                                                                                                 test_ratio=0.1,
+                                                                                                 test_ratio=0.2,
                                                                                                  max_feature_dims=None)
 
     # Create the model
-    # model = dense_binary_classifier(input_dim=X_train.shape[1],
-    #                                 hidden_layers_units=[X_train.shape[1] / 2] * 20,
-    #                                 dropout=0.3,
-    #                                 batch_norm=True)
     model = residual_dense_binary_classifier(input_dim=X_train.shape[1],
-                                             hidden_layers_units=[X_train.shape[1]] * 10,
-                                             dropout=0.2,
+                                             hidden_layers_units=[i + 1 for i in range(X_train.shape[1], 0, -1)],
+                                             dropout_rate=0.2,
                                              batch_norm=True)
     model.summary()
 

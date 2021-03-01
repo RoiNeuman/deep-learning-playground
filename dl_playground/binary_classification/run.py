@@ -1,6 +1,8 @@
 import multiprocessing
 
-from binary_classification.models.residual_dense_binary_classifier import residual_dense_binary_classifier
+import numpy as np
+
+from binary_classification.models.transformer_binary_classifier import transformer_binary_classifier
 from data_preprocess.airline_passenger_satisfaction_dataset import load_airline_passenger_satisfaction_dataset
 from utils.statistics import plot_confusion_matrix
 
@@ -12,14 +14,26 @@ def run():
                                                                                                  max_feature_dims=None)
 
     # Create the model
-    model = residual_dense_binary_classifier(input_dim=X_train.shape[1],
-                                             hidden_layers_units=[i + 1 for i in range(X_train.shape[1], 0, -1)],
-                                             dropout_rate=0.2,
-                                             batch_norm=True)
+    input_dim = X_train.shape[1]
+    embed_dim = 16
+    # model = residual_dense_binary_classifier(input_dim=X_train.shape[1],
+    #                                          hidden_layers_units=[i + 1 for i in range(X_train.shape[1], 0, -1)],
+    #                                          dropout_rate=0.2,
+    #                                          batch_norm=True)
+    model = transformer_binary_classifier(input_dim=input_dim,
+                                          attention_heads=[4] * 8,
+                                          embed_dim=embed_dim,
+                                          ff_dim=embed_dim)
     model.summary()
 
+    # Expanding the data to the embedding dimension
+    X_train = np.repeat(np.expand_dims(X_train, axis=2), embed_dim, axis=2)
+    X_val = np.repeat(np.expand_dims(X_val, axis=2), embed_dim, axis=2)
+    X_test = np.repeat(np.expand_dims(X_test, axis=2), embed_dim, axis=2)
+
     # Train the model
-    model.fit(X_train, Y_train,
+    model.fit(x=X_train,
+              y=Y_train,
               validation_data=(X_val, Y_val),
               epochs=10,
               batch_size=256,

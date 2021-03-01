@@ -24,9 +24,9 @@ def residual_dense_binary_classifier(input_dim: int,
                                l2_regularizer_param=l2_regularizer_param)(X)
 
     # Output layer
-    X = Dense(1, kernel_initializer='normal', activation='sigmoid')(X)
+    outputs = Dense(1, kernel_initializer='normal', activation='sigmoid')(X)
 
-    model = Model(inputs=X_input, outputs=X, name='residual_dense_binary_classifier')
+    model = Model(inputs=X_input, outputs=outputs, name='residual_dense_binary_classifier')
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model

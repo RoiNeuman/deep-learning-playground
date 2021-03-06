@@ -4,7 +4,7 @@ from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.models import Model
 
-from layers.residual_dense import ResidualDenseBlock
+from dl_playground.layers.residual_dense import ResidualDenseBlock
 
 
 def residual_dense_binary_classifier(input_dim: int,

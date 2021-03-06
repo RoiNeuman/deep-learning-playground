@@ -2,9 +2,10 @@ import multiprocessing
 
 import numpy as np
 
-from binary_classification.models.transformer_binary_classifier import transformer_binary_classifier
-from data_preprocess.airline_passenger_satisfaction_dataset import load_airline_passenger_satisfaction_dataset
-from utils.statistics import plot_confusion_matrix
+from dl_playground.binary_classification.models.transformer_binary_classifier import transformer_binary_classifier
+from dl_playground.data_preprocess.airline_passenger_satisfaction_dataset import \
+    load_airline_passenger_satisfaction_dataset
+from dl_playground.utils.statistics import plot_confusion_matrix
 
 
 def run():

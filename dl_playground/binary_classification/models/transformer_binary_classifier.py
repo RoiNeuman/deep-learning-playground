@@ -4,8 +4,8 @@ from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import Dense, Flatten
 from tensorflow.python.keras.models import Model
 
-from layers.token_position_embedding import TokenAndPositionEmbedding
-from layers.transformer import TransformerBlock
+from dl_playground.layers.token_position_embedding import TokenAndPositionEmbedding
+from dl_playground.layers.transformer import TransformerBlock
 
 
 def transformer_binary_classifier(input_dim: int,
